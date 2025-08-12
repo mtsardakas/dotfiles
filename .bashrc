@@ -112,4 +112,20 @@ mise_eval() {
     echo "Running: $output"
     eval "$output"
 }
+
+
 alias config='git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME"'
+
+dotfiles_autoupdate() {
+    config add -u && \
+    config commit -m "Update $(date +"%Y-%m-%d %H:%M") \
+        $(uname -s)/$(uname -m)-$(hostname -s)" && config push
+}
+
+
+dotfiles_init() {
+    git --no-replace-objects clone --bare --depth 1 \
+        git@github.com:mtsardakas/dotfiles.git $HOME/.dotfiles;
+    config config --local status.showUntrackedFiles no;
+    config checkout -f
+}
