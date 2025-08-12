@@ -1,0 +1,25 @@
+[user]
+	name = Michael Tsardakas
+	email = mtsarduckas@gmail.com
+[core]
+	editor = subl -n -w
+	excludesfile = /Users/michaeltsardakas/.gitignore_global
+    pager = delta
+
+[interactive]
+    diffFilter = delta --color-only
+
+[delta]
+    navigate = true
+    side-by-side = true
+    
+[merge]
+	conflictstyle = zdiff3
+
+[diff]
+	colorMoved = default
+
+[alias]
+    lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+[push]
+	autoSetupRemote = true
