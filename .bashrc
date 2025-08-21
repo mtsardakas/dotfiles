@@ -6,6 +6,28 @@ export PATH="/Users/michaeltsardakas/.local/bin:$PATH"
 export PATH=$PATH:~/.docker/bin
 export PATH=$PATH:/usr/local/bin
 export PATH=$PATH:/opt/homebrew/bin
+
+# ---- minimal, safe for non-interactive ----
+shopt -s expand_aliases
+alias config='git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME"'
+
+dotfiles_autoupdate() {
+  # Prefer avoiding alias to be extra-robust:
+  git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" add -u && \
+  git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" commit -m "Update $(date +"%Y-%m-%d %H:%M") $(uname -s)/$(uname -m)-$(hostname -s)" && \
+  git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" push
+}
+
+dotfiles_init() {
+  git --no-replace-objects clone --bare --depth 1 \
+    git@github.com:mtsardakas/dotfiles.git "$HOME/.dotfiles"
+  git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" config --local status.showUntrackedFiles no
+  git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" checkout -f
+}
+
+# Return early for non-interactive AFTER the functions/aliases above:
+[[ $- != *i* ]] && return
+
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 eval "$(fzf --bash)"
 
@@ -108,8 +130,7 @@ mise_eval() {
     eval "$output"
 }
 
-shopt -s expand_aliases
-alias config='git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME"'
+
 
 function y() {
   local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
@@ -120,16 +141,3 @@ function y() {
 }
 
 
-dotfiles_autoupdate() {
-    config add -u && \
-    config commit -m "Update $(date +"%Y-%m-%d %H:%M") \
-        $(uname -s)/$(uname -m)-$(hostname -s)" && config push
-}
-
-
-dotfiles_init() {
-    git --no-replace-objects clone --bare --depth 1 \
-        git@github.com:mtsardakas/dotfiles.git $HOME/.dotfiles;
-    config config --local status.showUntrackedFiles no;
-    config checkout -f
-}
