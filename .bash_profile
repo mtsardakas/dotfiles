@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 
-if [ -e ~/.profile ]; then . ~/.profile; fi
-if [[ -e ~/.aliases && $- = *i* ]]; then . ~/.aliases; fi
-if [[ -e ~/.bashrc && $- = *i* ]]; then . ~/.bashrc; fi
+# Always load .bashrc (needed for cron's login, non-interactive shells)
+[ -f ~/.bashrc ] && . ~/.bashrc
 
-# If not running interactively, don't do anything
-case $- in
-  *i*) ;;
-    *) return;;
-esac
+# Optional
+[ -e ~/.profile ] && . ~/.profile
+[ -e ~/.aliases ] && . ~/.aliases
+
+# If not running interactively, stop here
+case $- in *i*) ;; *) return ;; esac
 
 if [ -f `brew --prefix`/etc/bash_completion.d/git-completion.bash ]; then
   . `brew --prefix`/etc/bash_completion.d/git-completion.bash
@@ -21,15 +21,8 @@ export BASH_IT="${HOME}/.bash_it"
 
 # Lock and Load a custom theme file.
 # Leave empty to disable theming.
-# location /.bash_it/themes/
 # export BASH_IT_THEME='bobby-python'
 export BASH_IT_THEME='metal'
-# export BASH_IT_THEME='modern'
-# export BASH_IT_THEME='bira'
-# export BASH_IT_THEME='barbuk'
-# export BASH_IT_THEME='atomic'
-# export BASH_IT_THEME='brainy'
-# export BASH_IT_THEME='radek'
 export THEME_CLOCK_FORMAT="%H:%M"
 export THEME_SHOW_PYTHON=true
 export THEME_SHOW_BATTERY=true
@@ -51,11 +44,9 @@ export SCM_GIT_SHOW_MINIMAL_INFO=false
 export THEME_CHECK_SUDO=false
 
 
-
 # Load Bash It
 source "$BASH_IT"/bash_it.sh
 test -e "${HOME}/.iterm2_shell_integration.bash" && source "${HOME}/.iterm2_shell_integration.bash"
-
 
 # uv
 export PATH="/usr/local/bin:$PATH"
@@ -67,5 +58,6 @@ export PATH="/opt/homebrew/opt/postgresql@17/bin:$PATH"
 # This won't be added again if you remove it.
 source ~/.orbstack/shell/init.bash 2>/dev/null || :
 export PATH="/opt/homebrew/opt/postgresql@17/bin:$PATH"
+
 
 

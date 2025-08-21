@@ -72,13 +72,7 @@ _fzf_compgen_dir() {
   fd --type=d --hidden --exclude .git . "$1"
 }
 
-
-
-
 export FZF_DEFAULT_OPTS="--layout=reverse --border --info=inline --height=40%"
-
-export FZF_CTRL_T_OPTS="--preview 'bat -n --color=always --line-range :500 {}'"
-export FZF_ALT_C_OPTS="--preview 'eza --tree --color=always {} | head -200'"
 
 show_file_or_dir_preview="if [ -d {} ]; then eza --tree --color=always {} | head -200; else bat -n --color=always --line-range :500 {}; fi"
 
@@ -107,14 +101,24 @@ export PGSSLMODE=verify-ca
 export PGSSLROOTCERT="$HOME/Downloads/global-bundle.pem"
 
 eval "$(mise activate bash)"
+
 mise_eval() {
     output=$(mise run $@)
     echo "Running: $output"
     eval "$output"
 }
 
-
+shopt -s expand_aliases
 alias config='git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME"'
+
+function y() {
+  local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
+  yazi "$@" --cwd-file="$tmp"
+  IFS= read -r -d '' cwd < "$tmp"
+  [ -n "$cwd" ] && [ "$cwd" != "$PWD" ] && builtin cd -- "$cwd"
+  rm -f -- "$tmp"
+}
+
 
 dotfiles_autoupdate() {
     config add -u && \
