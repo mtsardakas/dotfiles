@@ -143,3 +143,4 @@ function y() {
 export GPG_TTY=$(tty)
 
 export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
+PROMPT_COMMAND="${PROMPT_COMMAND//;;/;}"
